@@ -10,7 +10,7 @@ services:
     environment:
       - TZ=Europe/Samara
       - PGTZ=Europe/Samara
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://stat-db:5432/postgres
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/postgres
       - SPRING_DATASOURCE_USERNAME=dbuser
       - SPRING_DATASOURCE_PASSWORD=12345
 

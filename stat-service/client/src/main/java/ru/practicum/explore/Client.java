@@ -16,7 +16,7 @@ import java.util.List;
 @Slf4j
 @Component
 public class Client {
-    private final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final RestClient client;
 
     public Client(@Value("${stat-server.url}") String serverUrl) {
@@ -46,8 +46,8 @@ public class Client {
         try {
             return client.get()
                     .uri(uriBuilder -> uriBuilder.path("/stats")
-                            .queryParam("start", start.format(FORMATTER))
-                            .queryParam("end", end.format(FORMATTER))
+                            .queryParam("start", start.format(formatter))
+                            .queryParam("end", end.format(formatter))
                             .queryParam("uris", uris)
                             .queryParam("unique", unique)
                             .build())

@@ -20,7 +20,7 @@ import java.util.List;
 @Log4j2
 @Transactional
 public class StatServiceImp implements StatService {
-    private final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final HitsRepository hitsRepository;
     private final HitMapper hitMapper;
 
@@ -41,8 +41,8 @@ public class StatServiceImp implements StatService {
     @Override
     @Transactional(readOnly = true)
     public List<StatDto> getHits(String startTime, String endTime, List<String> uris, boolean uniqueIp) {
-        LocalDateTime start = LocalDateTime.parse(URLDecoder.decode(startTime, StandardCharsets.UTF_8), FORMATTER);
-        LocalDateTime end = LocalDateTime.parse(URLDecoder.decode(endTime, StandardCharsets.UTF_8), FORMATTER);
+        LocalDateTime start = LocalDateTime.parse(URLDecoder.decode(startTime, StandardCharsets.UTF_8), formatter);
+        LocalDateTime end = LocalDateTime.parse(URLDecoder.decode(endTime, StandardCharsets.UTF_8), formatter);
 
         if (start.isAfter(end)) {
             throw new ValidationException("Period is incorrect.");
