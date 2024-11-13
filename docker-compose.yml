@@ -35,3 +35,27 @@ services:
     container_name: service
     ports:
       - "8080:8080"
+    depends_on:
+      - ewm-db
+    environment:
+      - TZ=Europe/Samara
+      - PGTZ=Europe/Samara
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=dbuser
+      - SPRING_DATASOURCE_PASSWORD=12345
+      - MY_SERVER_URL=http://server:9090
+
+  ewm-db:
+    image: postgres:16.1
+    container_name: postgres-ewm
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_PASSWORD=12345
+      - POSTGRES_USER=dbuser
+      - POSTGRES_DB=postgres
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10
