@@ -82,7 +82,7 @@ public class EventServiceImp implements EventService {
         checkInitiatorEvent(userId, event.getInitiator().getId());
         if (event.getState() == EventState.PUBLISHED)
             throw new UpdateEventIsPublishedException("Update event is published.");
-        else if (eventDto.getEventDate() != null && eventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2)))
+        else if (eventDto.getEventDate() != null && eventDto.getEventDate().isBefore(LocalDateTime.now().plusMinutes(119)))
             throw new UpdateEventTimeIncorrectException("Update event time = " + eventDto.getEventDate() + " is incorrect.");
 
         log.info("Update event with id = {} by user.", event.getId());
@@ -106,7 +106,7 @@ public class EventServiceImp implements EventService {
         Event event = eventsRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Event is not found."));
         if (event.getState() != EventState.PENDING)
             throw new UpdateEventIsPublishedException("Update event state is incorrect.");
-        else if (eventDto.getEventDate() != null && eventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(1)))
+        else if (eventDto.getEventDate() != null && eventDto.getEventDate().isBefore(LocalDateTime.now().plusMinutes(59)))
             throw new UpdateEventTimeIncorrectException("Update event time = " + eventDto.getEventDate() + " is incorrect.");
 
         log.info("Update event with id = {} by admin.", event.getId());
