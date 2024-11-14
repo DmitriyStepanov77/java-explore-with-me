@@ -1,7 +1,7 @@
 package ru.practicum.explore.controller.category;
 
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explore.dto.category.CategoryDto;
@@ -10,15 +10,10 @@ import ru.practicum.explore.service.category.CategoryService;
 
 @RestController
 @RequestMapping("/admin/categories")
+@AllArgsConstructor
 public class CategoryAdminController {
     private final CategoryService categoryService;
     private final CategoryDtoMapper categoryDtoMapper;
-
-    @Autowired
-    public CategoryAdminController(CategoryService categoryService, CategoryDtoMapper categoryDtoMapper) {
-        this.categoryService = categoryService;
-        this.categoryDtoMapper = categoryDtoMapper;
-    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

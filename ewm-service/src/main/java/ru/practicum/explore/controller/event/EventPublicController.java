@@ -1,7 +1,7 @@
 package ru.practicum.explore.controller.event;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explore.dto.event.EventFullDto;
 import ru.practicum.explore.mapper.EventDtoMapper;
@@ -13,17 +13,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/events")
+@AllArgsConstructor
 public class EventPublicController {
     private final EventService eventService;
     private final EventDtoMapper eventDtoMapper;
     private final StatClient statClient;
-
-    @Autowired
-    public EventPublicController(EventService eventService, EventDtoMapper eventDtoMapper, StatClient statClient) {
-        this.eventService = eventService;
-        this.eventDtoMapper = eventDtoMapper;
-        this.statClient = statClient;
-    }
 
     @GetMapping("/{eventId}")
     public EventFullDto getEvent(@PathVariable int eventId, HttpServletRequest request) {

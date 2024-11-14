@@ -1,10 +1,10 @@
 package ru.practicum.explore.service.user;
 
 import com.querydsl.core.BooleanBuilder;
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.explore.dto.user.UserDto;
 import ru.practicum.explore.exception.NotFoundException;
@@ -20,15 +20,10 @@ import java.util.List;
 @Log4j2
 @Service
 @Transactional
+@AllArgsConstructor
 public class UserServiceImp implements UserService {
     private final UserDtoMapper userDtoMapper;
     private final UsersRepository usersRepository;
-
-    @Autowired
-    public UserServiceImp(UserDtoMapper userDtoMapper, UsersRepository usersRepository) {
-        this.userDtoMapper = userDtoMapper;
-        this.usersRepository = usersRepository;
-    }
 
     @Override
     public UserDto addUser(UserDto userDto) {

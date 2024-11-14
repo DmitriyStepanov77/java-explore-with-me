@@ -1,7 +1,7 @@
 package ru.practicum.explore.controller;
 
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explore.HitDto;
@@ -11,13 +11,9 @@ import ru.practicum.explore.service.StatService;
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 public class StatController {
     private final StatService statService;
-
-    @Autowired
-    public StatController(StatService statService) {
-        this.statService = statService;
-    }
 
     @PostMapping("/hit")
     @ResponseStatus(HttpStatus.CREATED)

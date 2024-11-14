@@ -1,8 +1,8 @@
 package ru.practicum.explore.service;
 
 import jakarta.validation.ValidationException;
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explore.HitDto;
@@ -19,16 +19,11 @@ import java.util.List;
 @Service
 @Log4j2
 @Transactional
+@AllArgsConstructor
 public class StatServiceImp implements StatService {
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final HitsRepository hitsRepository;
     private final HitMapper hitMapper;
-
-    @Autowired
-    public StatServiceImp(HitsRepository hitsRepository, HitMapper hitMapper) {
-        this.hitsRepository = hitsRepository;
-        this.hitMapper = hitMapper;
-    }
 
     @Override
     public HitDto saveHit(HitDto hitDto) {

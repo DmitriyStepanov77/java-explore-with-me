@@ -1,6 +1,6 @@
 package ru.practicum.explore.controller.compilation;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explore.dto.compilation.CompilationDto;
 import ru.practicum.explore.mapper.CompilationDtoMapper;
@@ -10,16 +10,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/compilations")
+@AllArgsConstructor
 public class CompilationPublicController {
     private final CompilationService compilationService;
     private final CompilationDtoMapper compilationDtoMapper;
-
-    @Autowired
-    public CompilationPublicController(CompilationService compilationService, CompilationDtoMapper compilationDtoMapper) {
-
-        this.compilationService = compilationService;
-        this.compilationDtoMapper = compilationDtoMapper;
-    }
 
     @GetMapping
     public List<CompilationDto> getCompilations(@RequestParam(required = false) Boolean pinned,

@@ -61,7 +61,7 @@ public class ErrorHandler {
                 .errors(new ArrayList<>())
                 .message(e.getMessage())
                 .reason("NotFoundException")
-                .status(HttpStatus.BAD_REQUEST.name())
+                .status(HttpStatus.NOT_FOUND.name())
                 .timestamp(LocalDateTime.now())
                 .build();
     }

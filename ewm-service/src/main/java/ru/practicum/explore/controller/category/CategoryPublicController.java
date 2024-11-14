@@ -1,6 +1,6 @@
 package ru.practicum.explore.controller.category;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explore.dto.category.CategoryDto;
 import ru.practicum.explore.mapper.CategoryDtoMapper;
@@ -10,15 +10,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/categories")
+@AllArgsConstructor
 public class CategoryPublicController {
     private final CategoryService categoryService;
     private final CategoryDtoMapper categoryDtoMapper;
-
-    @Autowired
-    public CategoryPublicController(CategoryService categoryService, CategoryDtoMapper categoryDtoMapper) {
-        this.categoryService = categoryService;
-        this.categoryDtoMapper = categoryDtoMapper;
-    }
 
     @GetMapping("/{catId}")
     public CategoryDto getCategory(@PathVariable int catId) {

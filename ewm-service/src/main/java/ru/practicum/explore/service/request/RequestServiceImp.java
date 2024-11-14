@@ -1,7 +1,7 @@
 package ru.practicum.explore.service.request;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explore.exception.ConflictException;
@@ -21,21 +21,17 @@ import java.util.List;
 @Service
 @Transactional
 @Log4j2
+@AllArgsConstructor
 public class RequestServiceImp implements RequestService {
 
     private final RequestsRepository requestsRepository;
     private final EventsRepository eventsRepository;
     private final UsersRepository usersRepository;
 
-    @Autowired
-    public RequestServiceImp(RequestsRepository requestsRepository, EventsRepository eventsRepository, UsersRepository usersRepository) {
-        this.requestsRepository = requestsRepository;
-        this.eventsRepository = eventsRepository;
-        this.usersRepository = usersRepository;
-    }
-
     @Override
     public Request addRequest(int eventId, int userId) {
+        log.info("Add request to event id = {} by user id = {}.", eventId, userId);
+
         Event event = eventsRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Event not found."));
         User user = usersRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found."));
 
@@ -67,10 +63,13 @@ public class RequestServiceImp implements RequestService {
 
     @Override
     public Request updateRequestsByUser(int requestId, int userId) {
+        log.info("Update status request id = {}.", requestId);
 
         Request request = requestsRepository.findByIdAndRequesterId(requestId, userId)
                 .orElseThrow(() -> new NotFoundException("Request not found."));
         request.setStatus(RequestState.CANCELED);
+
+        log.info("Update request id = {} to status = {}.", requestId, request.getStatus());
 
         return requestsRepository.save(request);
     }

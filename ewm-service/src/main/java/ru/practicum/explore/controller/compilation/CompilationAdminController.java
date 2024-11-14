@@ -1,7 +1,7 @@
 package ru.practicum.explore.controller.compilation;
 
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explore.dto.compilation.CompilationDto;
@@ -12,16 +12,10 @@ import ru.practicum.explore.service.compilation.CompilationService;
 
 @RestController
 @RequestMapping("/admin/compilations")
+@AllArgsConstructor
 public class CompilationAdminController {
     private final CompilationService compilationService;
     private final CompilationDtoMapper compilationDtoMapper;
-
-    @Autowired
-    public CompilationAdminController(CompilationService compilationService, CompilationDtoMapper compilationDtoMapper) {
-
-        this.compilationService = compilationService;
-        this.compilationDtoMapper = compilationDtoMapper;
-    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

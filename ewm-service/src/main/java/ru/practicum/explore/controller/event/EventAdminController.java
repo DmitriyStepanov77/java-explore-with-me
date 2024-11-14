@@ -1,7 +1,7 @@
 package ru.practicum.explore.controller.event;
 
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explore.dto.event.EventFullDto;
 import ru.practicum.explore.dto.event.UpdateAdminEventDto;
@@ -12,15 +12,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin/events")
+@AllArgsConstructor
 public class EventAdminController {
     private final EventService eventService;
     private final EventDtoMapper eventDtoMapper;
-
-    @Autowired
-    public EventAdminController(EventService eventService, EventDtoMapper eventDtoMapper) {
-        this.eventService = eventService;
-        this.eventDtoMapper = eventDtoMapper;
-    }
 
     @PatchMapping("/{eventId}")
     public EventFullDto updateEvent(@Valid @RequestBody UpdateAdminEventDto eventDto,

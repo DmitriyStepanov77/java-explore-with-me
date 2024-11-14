@@ -1,6 +1,6 @@
 package ru.practicum.explore.controller.request;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explore.dto.request.RequestDto;
@@ -11,16 +11,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users/{userId}/requests")
+@AllArgsConstructor
 public class RequestPrivateController {
     private final RequestService requestService;
     private final RequestDtoMapper requestDtoMapper;
-
-    @Autowired
-    public RequestPrivateController(RequestService requestService, RequestDtoMapper requestDtoMapper) {
-
-        this.requestService = requestService;
-        this.requestDtoMapper = requestDtoMapper;
-    }
 
     @GetMapping
     public List<RequestDto> getRequestsByUser(@PathVariable int userId) {

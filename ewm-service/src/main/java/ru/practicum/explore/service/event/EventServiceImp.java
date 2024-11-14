@@ -2,8 +2,8 @@ package ru.practicum.explore.service.event;
 
 import com.querydsl.core.BooleanBuilder;
 import jakarta.validation.ValidationException;
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @Log4j2
+@AllArgsConstructor
 public class EventServiceImp implements EventService {
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -47,26 +48,16 @@ public class EventServiceImp implements EventService {
     private final RequestDtoMapper requestDtoMapper;
     private final StatClient statClient;
 
-    @Autowired
-    public EventServiceImp(EventsRepository eventsRepository, NewEventDtoMapper newEventDtoMapper,
-                           UserService userService, CategoryService categoryService, RequestsRepository requestsRepository, RequestDtoMapper requestDtoMapper, StatClient statClient) {
-        this.eventsRepository = eventsRepository;
-        this.newEventDtoMapper = newEventDtoMapper;
-        this.userService = userService;
-        this.categoryService = categoryService;
-        this.requestsRepository = requestsRepository;
-        this.requestDtoMapper = requestDtoMapper;
-        this.statClient = statClient;
-    }
-
     @Override
     public Event addEvent(NewEventDto newEventDto, int userId) {
         Event event = newEventDtoMapper.toEntity(newEventDto);
 
-        log.info("Added event = {}", event.toString());
+        log.info("Added event with title = {} and event date = {}.", event.getTitle(), event.getEventDate());
 
         event.setInitiator(userService.getUser(userId));
+        log.info("Initiator event = {}.", event.getInitiator().getName());
         event.setCategory(categoryService.getCategory(newEventDto.getCategory()));
+        log.info("Category event = {}.", event.getCategory().getName());
         event.setCreatedOn(LocalDateTime.now());
         event.setPublishedOn(LocalDateTime.now());
         event.setState(EventState.PENDING);
@@ -95,6 +86,8 @@ public class EventServiceImp implements EventService {
             }
         }
 
+        log.info("New state event = {}.", event.getState());
+
         return eventsRepository.save(updateEvent(event, eventDto.getCategory(), eventDto.getAnnotation(),
                 eventDto.getDescription(), eventDto.getLocation(), eventDto.getEventDate(), eventDto.getPaid(),
                 eventDto.getParticipantLimit(), eventDto.getRequestModeration(), eventDto.getTitle()));
@@ -118,6 +111,8 @@ public class EventServiceImp implements EventService {
                 default -> throw new ConflictException("State event is incorrect.");
             }
         }
+
+        log.info("New state event = {}.", event.getState());
 
         return eventsRepository.save(updateEvent(event, eventDto.getCategory(), eventDto.getAnnotation(),
                 eventDto.getDescription(), eventDto.getLocation(), eventDto.getEventDate(), eventDto.getPaid(),
@@ -199,6 +194,8 @@ public class EventServiceImp implements EventService {
 
     @Override
     public List<Request> getRequestsByEvent(int userId, int eventId) {
+        log.info("Get requests by event with id = {}.", eventId);
+
         Event event = eventsRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Event is not found."));
         checkInitiatorEvent(userId, event.getInitiator().getId());
         return requestsRepository.findByEventId(eventId);
@@ -211,8 +208,7 @@ public class EventServiceImp implements EventService {
 
         Event event = eventsRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Event is not found."));
         checkInitiatorEvent(userId, event.getInitiator().getId());
-        List<Integer> requestIds = updateDto.getRequestIds();
-        List<Request> requests = requestsRepository.findAllByIdIn(requestIds);
+        List<Request> requests = requestsRepository.findAllByIdIn(updateDto.getRequestIds());
 
         int confirmedRequest = event.getConfirmedRequests();
         if (confirmedRequest >= event.getParticipantLimit())
@@ -221,20 +217,23 @@ public class EventServiceImp implements EventService {
         List<Request> confirmedRequests = new ArrayList<>();
         List<Request> rejectedRequests = new ArrayList<>();
 
-        if (event.getParticipantLimit() != 0 && event.getRequestModeration()) {
-            for (Request r : requests) {
-                if (r.getStatus() != RequestState.PENDING)
-                    throw new ConflictException("The request is not in pending status.");
-                if (updateDto.getStatus() == RequestState.CONFIRMED && confirmedRequest < event.getParticipantLimit()) {
-                    r.setStatus(RequestState.CONFIRMED);
-                    confirmedRequest++;
-                    confirmedRequests.add(r);
-                } else {
-                    r.setStatus(RequestState.REJECTED);
-                    rejectedRequests.add(r);
-                }
+        for (Request r : requests) {
+            if (r.getStatus() != RequestState.PENDING)
+                throw new ConflictException("The request is not in pending status.");
+            if (updateDto.getStatus() == RequestState.CONFIRMED && confirmedRequest < event.getParticipantLimit()) {
+                r.setStatus(RequestState.CONFIRMED);
+                confirmedRequest++;
+                confirmedRequests.add(r);
+                log.info("Request with id = {} update status = {}.", r.getId(), r.getStatus());
+            } else {
+                r.setStatus(RequestState.REJECTED);
+                rejectedRequests.add(r);
+                log.info("Request with id = {} update status = {}.", r.getId(), r.getStatus());
             }
         }
+
+        log.info("Event with id = {} confirmed request = {}.", event.getId(), event.getConfirmedRequests());
+
         event.setConfirmedRequests(confirmedRequest);
         eventsRepository.save(event);
         requestsRepository.saveAll(confirmedRequests);
@@ -248,12 +247,14 @@ public class EventServiceImp implements EventService {
                               LocationDto location, LocalDateTime eventDate, Boolean paid,
                               Integer participantLimit, Boolean requestModeration, String title) {
 
-        if (categoryId != null)
+        if (categoryId != null) {
             updateEvent.setCategory(categoryService.getCategory(categoryId));
-
+            log.info("New category event = {}.", updateEvent.getCategory().getName());
+        }
         if (location != null) {
             updateEvent.setLocationLon(location.getLon());
             updateEvent.setLocationLat(location.getLat());
+            log.info("New location event: lon = {}, lat = {}.", location.getLon(), location.getLat());
         }
 
         Optional.ofNullable(annotation).ifPresent(updateEvent::setAnnotation);

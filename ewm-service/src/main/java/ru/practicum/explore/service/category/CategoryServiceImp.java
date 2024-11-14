@@ -1,7 +1,7 @@
 package ru.practicum.explore.service.category;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -18,17 +18,12 @@ import java.util.List;
 @Log4j2
 @Service
 @Transactional
+@AllArgsConstructor
 public class CategoryServiceImp implements CategoryService {
 
     private final CategoriesRepository categoriesRepository;
 
     private final CategoryDtoMapper categoryDtoMapper;
-
-    @Autowired
-    public CategoryServiceImp(CategoriesRepository categoriesRepository, CategoryDtoMapper categoryDtoMapper) {
-        this.categoriesRepository = categoriesRepository;
-        this.categoryDtoMapper = categoryDtoMapper;
-    }
 
     @Override
     public Category addCategory(CategoryDto categoryDto) {
