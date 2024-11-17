@@ -15,11 +15,11 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class Client {
+public class StatClient {
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final RestClient client;
 
-    public Client(@Value("${stat-server.url}") String serverUrl) {
+    public StatClient(@Value("${stat-server.url}") String serverUrl) {
         this.client = RestClient.create(serverUrl);
     }
 
