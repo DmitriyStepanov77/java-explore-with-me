@@ -21,6 +21,7 @@ import ru.practicum.explore.service.user.UserService;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Log4j2
 @Service
@@ -34,7 +35,8 @@ public class CommentServiceImp implements CommentService {
 
     @Override
     public CommentDto addComment(NewCommentDto commentDto, int userId, int eventId) {
-        log.info("Added comment to event id = {}.", eventId);
+        log.info("Added comment to event id = {}, author id = {}, title = {}.",
+                eventId, userId, commentDto.getTitle());
 
         Comment comment = commentDtoMapper.toEntity(commentDto);
         comment.setAuthor(userService.getUser(userId));
@@ -72,25 +74,22 @@ public class CommentServiceImp implements CommentService {
 
     @Override
     public CommentDto updateCommentByUser(UpdateCommentDto commentDto, int commentId, int userId) {
-        log.info("Update comment id = {}.", commentId);
+        log.info("Update comment id = {}, author id = {}.", commentId, userId);
 
         Comment comment = getCommentByAuthor(commentId, userId);
 
         if (comment.getState() != CommentState.PENDING)
             throw new ConflictException("Comment state is not pending");
 
-        if (commentDto.getText() != null && !commentDto.getText().isEmpty())
-            comment.setText(commentDto.getText());
-
-        if (commentDto.getTitle() != null && !commentDto.getTitle().isEmpty())
-            comment.setTitle(commentDto.getTitle());
+        Optional.ofNullable(commentDto.getText()).ifPresent(comment::setText);
+        Optional.ofNullable(commentDto.getTitle()).ifPresent(comment::setTitle);
 
         return commentDtoMapper.toModel(comment);
     }
 
     @Override
     public CommentDto updateStatusByAdmin(int commentId, String state) {
-        log.info("Update status by comment id = {}.", commentId);
+        log.info("Update status by comment id = {}, new status = {}.", commentId, state);
 
         Comment comment = commentsRepository.findById(commentId)
                 .orElseThrow(() -> new NotFoundException("Comment not found."));
