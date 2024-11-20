@@ -3,9 +3,11 @@ package ru.practicum.explore.controller.event;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.explore.dto.comment.CommentDto;
 import ru.practicum.explore.dto.event.EventFullDto;
 import ru.practicum.explore.dto.event.UpdateAdminEventDto;
 import ru.practicum.explore.mapper.EventDtoMapper;
+import ru.practicum.explore.service.comment.CommentService;
 import ru.practicum.explore.service.event.EventService;
 
 import java.util.List;
@@ -16,6 +18,7 @@ import java.util.List;
 public class EventAdminController {
     private final EventService eventService;
     private final EventDtoMapper eventDtoMapper;
+    private CommentService commentService;
 
     @PatchMapping("/{eventId}")
     public EventFullDto updateEvent(@Valid @RequestBody UpdateAdminEventDto eventDto,
@@ -35,4 +38,9 @@ public class EventAdminController {
                 .map(eventDtoMapper::toModel).toList();
     }
 
+    @PatchMapping("/{eventId}/comments/{commentId}")
+    public CommentDto updateCommentState(@RequestParam String state,
+                                         @PathVariable int commentId) {
+        return commentService.updateStatusByAdmin(commentId, state);
+    }
 }

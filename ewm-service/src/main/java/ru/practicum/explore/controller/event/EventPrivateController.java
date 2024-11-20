@@ -4,6 +4,9 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.explore.dto.comment.CommentDto;
+import ru.practicum.explore.dto.comment.NewCommentDto;
+import ru.practicum.explore.dto.comment.UpdateCommentDto;
 import ru.practicum.explore.dto.event.EventFullDto;
 import ru.practicum.explore.dto.event.EventRequestStatusUpdateResult;
 import ru.practicum.explore.dto.event.NewEventDto;
@@ -12,6 +15,7 @@ import ru.practicum.explore.dto.request.RequestDto;
 import ru.practicum.explore.dto.request.RequestUpdateDto;
 import ru.practicum.explore.mapper.EventDtoMapper;
 import ru.practicum.explore.mapper.RequestDtoMapper;
+import ru.practicum.explore.service.comment.CommentService;
 import ru.practicum.explore.service.event.EventService;
 
 import java.util.List;
@@ -23,6 +27,7 @@ public class EventPrivateController {
     private final EventService eventService;
     private final EventDtoMapper eventDtoMapper;
     private final RequestDtoMapper requestDtoMapper;
+    private final CommentService commentService;
 
     @GetMapping("/{eventId}")
     public EventFullDto getEvent(@PathVariable int eventId) {
@@ -65,6 +70,26 @@ public class EventPrivateController {
                                                                @PathVariable int userId,
                                                                @PathVariable int eventId) {
         return eventService.updateRequestStatus(updateDto, userId, eventId);
+    }
+
+    @PostMapping("/{eventId}/comments")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CommentDto addComment(@Valid @RequestBody NewCommentDto commentDto,
+                                 @PathVariable int userId,
+                                 @PathVariable int eventId) {
+        return commentService.addComment(commentDto, userId, eventId);
+    }
+
+    @PatchMapping("/{eventId}/comments/{commentId}")
+    public CommentDto updateComment(@Valid @RequestBody UpdateCommentDto commentDto,
+                                    @PathVariable int userId,
+                                    @PathVariable int commentId) {
+        return commentService.updateCommentByUser(commentDto, commentId, userId);
+    }
+
+    @GetMapping("/{eventId}/comments/{commentId}")
+    public CommentDto getComment(@PathVariable int userId, @PathVariable int commentId) {
+        return commentService.getComment(commentId, userId);
     }
 
 }
