@@ -3,8 +3,10 @@ package ru.practicum.explore.controller.event;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.explore.dto.comment.CommentDto;
 import ru.practicum.explore.dto.event.EventFullDto;
 import ru.practicum.explore.mapper.EventDtoMapper;
+import ru.practicum.explore.service.comment.CommentService;
 import ru.practicum.explore.service.event.EventService;
 
 import ru.practicum.explore.StatClient;
@@ -18,6 +20,7 @@ public class EventPublicController {
     private final EventService eventService;
     private final EventDtoMapper eventDtoMapper;
     private final StatClient statClient;
+    private final CommentService commentService;
 
     @GetMapping("/{eventId}")
     public EventFullDto getEvent(@PathVariable int eventId, HttpServletRequest request) {
@@ -40,6 +43,13 @@ public class EventPublicController {
         return eventService.getEventsWithFilter(text, categories, paid, rangeStart,
                         rangeEnd, onlyAvailable, sort, from, size).stream()
                 .map(eventDtoMapper::toModel).toList();
+    }
+
+    @GetMapping("/{eventId}/comments")
+    public List<CommentDto> getComments(@PathVariable int eventId,
+                                        @RequestParam(defaultValue = "0") int from,
+                                        @RequestParam(defaultValue = "10") int size) {
+        return commentService.getComments(0, true, from, size);
     }
 
 }
